@@ -14,8 +14,17 @@ class HelloController {
         return "HELLO DYEGO! $name"
     }
 
+    @GetMapping("/moves/getLegal")
+    fun getLegalMoves(currentFigure: String): List<Move> {
+        val board = Board()
+        val allLegalMoves = board.legalMoves()
+        val legalMovesForCurrentFigure = allLegalMoves.filter { it.toString().startsWith(currentFigure) }
+
+        return legalMovesForCurrentFigure
+    }
+
     @GetMapping("/chessMagic")
-    fun chessMagic() {
+    fun chessMagic(): String {
         // Creates a new chessboard in the standard initial position
         // Creates a new chessboard in the standard initial position
         val board = Board()
@@ -23,10 +32,13 @@ class HelloController {
         // Make a move from E2 to E4 squares
         board.doMove(Move(Square.E2, Square.E4))
 
-        board.doMove(Move(Square.E7, Square.E5))
-        // print the chessboard in a human-readable form
+        board.doMove(Move(Square.B7, Square.B4))
 
         // print the chessboard in a human-readable form
-        System.out.println(board.toString())
+
+        val newBoard = board.toString()
+        // print the chessboard in a human-readable form
+
+        return newBoard
     }
 }
