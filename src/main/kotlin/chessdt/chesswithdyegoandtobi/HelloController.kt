@@ -30,19 +30,15 @@ class HelloController {
     fun chessMagic(
         @RequestBody moveArguments: MoveArguments
     ): String {
-        val startPosition = moveArguments.startPosition
-        val endPosition = moveArguments.endPosition
-
-        val startSquare = Square.valueOf(startPosition)
-        val endSquare = Square.valueOf(endPosition)
+        val startSquare = Square.valueOf(moveArguments.startPosition)
+        val endSquare = Square.valueOf(moveArguments.endPosition)
 
         // check if move is legal
-        val legalMoves = getLegalMoves(startPosition)
+        val legalMoves = getLegalMoves(moveArguments.startPosition)
         val selectedMove = Move(startSquare, endSquare)
-        val isSelectedMoveLegal = selectedMove in legalMoves
 
         // Make a move if legal
-        if (isSelectedMoveLegal) {
+        if (selectedMove.isLegal(legalMoves)) {
             board.doMove(Move(startSquare, endSquare))
         } else {
             print("Fuck Off")
@@ -51,4 +47,6 @@ class HelloController {
         // print the chessboard in a human-readable form
         return board.toString()
     }
+
+    fun Move.isLegal(legalMoves: List<Move>) = this in legalMoves
 }
