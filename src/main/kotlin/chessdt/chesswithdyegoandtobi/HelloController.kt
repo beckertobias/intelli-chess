@@ -44,8 +44,7 @@ class HelloController {
             print("Fuck Off")
         }
 
-        // print the chessboard in a human-readable form
-        return board.toString()
+        return board.fen
     }
 
     fun Move.isLegal(legalMoves: List<Move>) = this in legalMoves
