@@ -28,8 +28,11 @@ class HelloController {
 
     @PostMapping("/chessMagic")
     fun chessMagic(
-        @RequestBody moveArguments: MoveArguments
-    ): String {
+        @RequestBody moveArgumentsString: String
+//        @RequestBody moveArguments: MoveArguments
+    ): Response {
+        val split = moveArgumentsString.split(",")
+        val moveArguments = MoveArguments(split[0], split[1])
         val startSquare = Square.valueOf(moveArguments.startPosition)
         val endSquare = Square.valueOf(moveArguments.endPosition)
 
@@ -39,13 +42,17 @@ class HelloController {
 
         // Make a move if legal
         if (selectedMove.isLegal(legalMoves)) {
-            board.doMove(Move(startSquare, endSquare))
+            board.doMove(selectedMove)
         } else {
             print("Fuck Off")
         }
 
-        return board.fen
+        return Response(board.fen)
     }
+
+    data class Response(
+        val fen: String
+    )
 
     fun Move.isLegal(legalMoves: List<Move>) = this in legalMoves
 }
