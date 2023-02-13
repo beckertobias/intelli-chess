@@ -4,6 +4,9 @@ import chessdt.chesswithdyegoandtobi.domain.MoveArguments
 import com.github.bhlangonijr.chesslib.Board
 import com.github.bhlangonijr.chesslib.Square
 import com.github.bhlangonijr.chesslib.move.Move
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -26,11 +29,13 @@ class HelloController {
         return allLegalMoves.filter { it.toString().startsWith(currentFigure.lowercase()) }
     }
 
+    @CrossOrigin(origins = ["http://localhost:3000/"])
     @PostMapping("/chessMagic")
     fun chessMagic(
-        @RequestBody moveArgumentsString: String
+        @RequestBody moveArgumentsString: String,
 //        @RequestBody moveArguments: MoveArguments
-    ): Response {
+    ): ResponseEntity<String?> {
+        println(moveArgumentsString)
         val split = moveArgumentsString.split(",")
         val moveArguments = MoveArguments(split[0], split[1])
         val startSquare = Square.valueOf(moveArguments.startPosition)
@@ -44,14 +49,16 @@ class HelloController {
         if (selectedMove.isLegal(legalMoves)) {
             board.doMove(selectedMove)
         } else {
-            print("Fuck Off")
+            return ResponseEntity("Fuck Off", HttpStatus.OK)
         }
 
-        return Response(board.fen)
+        println(board.fen)
+
+        return ResponseEntity(board.fen, HttpStatus.OK)
     }
 
     data class Response(
-        val fen: String
+        val fen: String,
     )
 
     fun Move.isLegal(legalMoves: List<Move>) = this in legalMoves
